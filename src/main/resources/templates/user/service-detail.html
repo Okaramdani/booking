@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Service Detail - Smart Booking</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: #f8f9fa; }
+        .navbar { box-shadow: 0 2px 4px rgba(0,0,0,.1); }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/"><i class="fas fa-calendar-check"></i> Smart Booking</a>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-6">
+                <img th:src="${service.imageUrl ?: 'https://via.placeholder.com/500'}" class="img-fluid rounded">
+            </div>
+            <div class="col-md-6">
+                <h2 th:text="${service.name}">Service Name</h2>
+                <span class="badge bg-info" th:text="${service.category}">Category</span>
+                <p class="mt-3" th:text="${service.description}">Description</p>
+                <h4>Rp <span th:text="${#numbers.formatDecimal(service.price, 0, 'COMMA', 0, 'POINT')}">0</span></h4>
+                <p><i class="fas fa-clock"></i> <span th:text="${service.duration}">0</span> minutes</p>
+                
+                <div th:if="${#authorization.expression('isAuthenticated()')}" class="card mt-4">
+                    <div class="card-body">
+                        <h5>Book This Service</h5>
+                        <form th:action="@{/bookings}" method="post" th:object="${bookingRequest}">
+                             <input type="hidden" th:field="*{serviceId}">
+                            <div class="mb-3">
+                                <label class="form-label">Date</label>
+                                <input type="date" th:field="*{date}" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Start Time</label>
+                                <input type="time" th:field="*{startTime}" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Note (Optional)</label>
+                                <textarea th:field="*{note}" class="form-control" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Confirm Booking</button>
+                        </form>
+                    </div>
+                </div>
+                <div th:unless="${#authorization.expression('isAuthenticated()')}" class="alert alert-info mt-4">
+                    Please <a href="/login">login</a> to book this service.
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

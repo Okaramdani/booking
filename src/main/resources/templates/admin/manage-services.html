@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Services - Smart Booking</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: #f8f9fa; }
+        .sidebar { min-height: 100vh; background: #343a40; }
+        .sidebar .nav-link { color: #adb5bd; }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { color: #fff; background: #495057; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar p-3">
+                <div class="text-center text-white mb-4">
+                    <h4><i class="fas fa-calendar-check"></i> Admin Panel</h4>
+                </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/admin/services"><i class="fas fa-concierge-bell"></i> Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/bookings"><i class="fas fa-calendar-alt"></i> Bookings</a>
+                    </li>
+                    <li class="nav-item">
+                         <form th:action="@{/logout}" method="post" class="d-inline">
+                             <button type="submit" class="nav-link btn btn-link text-light"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                         </form>
+                     </li>
+                </ul>
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Manage Services</h2>
+                    <a href="/admin/services/new" class="btn btn-primary"><i class="fas fa-plus"></i> Add New Service</a>
+                </div>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Duration</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="service : ${services}">
+                                    <td th:text="${service.name}">Name</td>
+                                    <td><span class="badge bg-info" th:text="${service.category}">Category</span></td>
+                                    <td>Rp <span th:text="${#numbers.formatDecimal(service.price, 0, 'COMMA', 0, 'POINT')}">0</span></td>
+                                    <td th:text="${service.duration} + ' min'">Duration</td>
+                                    <td>
+                                        <span th:if="${service.status == 'AVAILABLE'}" class="badge bg-success">Available</span>
+                                        <span th:if="${service.status == 'UNAVAILABLE'}" class="badge bg-danger">Unavailable</span>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/admin/services/{id}/edit(id=${service.id})}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
+                                        <form th:action="@{/admin/services/{id}/delete(id=${service.id})}" method="post" style="display:inline;">
+                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this service?')"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
